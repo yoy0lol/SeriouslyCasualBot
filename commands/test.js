@@ -18,6 +18,6 @@ module.exports = {
 	async execute(interaction) {
 		const input1 = interaction.options.getString('text')
 		const input2 = interaction.options.getString('text2')
-		await interaction.reply(`${input1} and ${input2}`);
+		await interaction.reply({ content: (`${input1} and ${input2}`), ephemeral: true})
 	},
 };
