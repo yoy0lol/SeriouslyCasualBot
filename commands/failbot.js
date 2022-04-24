@@ -12,10 +12,16 @@ function pushToList(list, ob){
 	return list.push(ob)
 }
 
-function urlChecker(link){
+function urlValidationChecker(link){
 	const urlSourceRegexTest = /twitch|youtube|squad/
 	const urlCheckTest = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g
 	return urlSourceRegexTest.test(link) && urlCheckTest.test(link)	
+}
+
+function urlDuplicationChecker(vidList, link){
+	const result = vidList.filter((e) => e.failUrl === link)
+	console.log(result.length === 0)
+	return result.length === 0
 }
 
 // CODE
@@ -77,12 +83,14 @@ module.exports = {
 
 		if (interaction.options.getSubcommand() === 'add') {
 			// regex check for link
-			const linkValid = urlChecker(failUrl)
+			const linkValid = urlValidationChecker(failUrl)
+			const duplicationCheck = urlDuplicationChecker(vidList, failUrl)
+
 			// TODO: desc character limit?
 			// TODO: if the same URL is there, decline?
 			
 			// if the regex validation passes, continue with the code, else alert the user that this is invalid:
-			if (linkValid) {
+			if (linkValid && duplicationCheck) {
 				// set a variable that can change
 				let id = 1
 				
