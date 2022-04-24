@@ -87,7 +87,6 @@ module.exports = {
 			const duplicationCheck = urlDuplicationChecker(vidList, failUrl)
 
 			// TODO: desc character limit?
-			// TODO: if the same URL is there, decline?
 			
 			// if the regex validation passes, continue with the code, else alert the user that this is invalid:
 			if (linkValid && duplicationCheck) {
@@ -162,7 +161,7 @@ module.exports = {
 				const result = vidList.filter((e) => e.id === filterId)[0]
 				console.log(result)
 				await interaction.reply({
-					content: `Here is ${name}'s fail video: ${result.failUrl}` //FIXME: Put a check in place so that when a user's input is invalid (i.e. when they put an ID that's not there, return an error message)
+					content: `Here is ${name}'s fail video: ${result.failUrl}` //FIXME: Move this code to the /list command so that there is an optional integer (i.e. '/fail list 2' or something)
 				})
 			}
 		}
