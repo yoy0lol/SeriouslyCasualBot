@@ -2,7 +2,7 @@ const { databaseString } = require('../config.json');
 const Keyv = require('keyv');
 const { MessageEmbed } = require('discord.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { DiscordAPIError } = require('discord.js');
+// const { DiscordAPIError } = require('discord.js');
 const failVideos = new Keyv(databaseString, { namespace:`failvideos` });
 failVideos.on('error', err => console.error('Keyv connection error:', err));
 
@@ -51,26 +51,18 @@ module.exports = {
 						))
 		.addSubcommand(subcommand =>
 				subcommand
-					.setName('list')
-					.setDescription("List a player's fails")
-					.addUserOption(option =>
-						option.setName('name')
-						.setDescription('The discord user tag of the player')
-						.setRequired(true))
-					)
-		.addSubcommand(subcommand =>
-				subcommand
 					.setName('view')
-					.setDescription("View a player's fail video")
+					.setDescription("View a player's fails")
 					.addUserOption(option =>
 						option.setName('name')
 						.setDescription('The discord user tag of the player')
-						.setRequired(true))
+						.setRequired(true)
+					)
 					.addNumberOption(option =>
 						option.setName('id')
 						.setDescription("The ID of the player's fail video")
-						.setRequired(true))
-					)
+						.setRequired(false)
+					))
 		,
 	
 	async execute(interaction) {
@@ -121,18 +113,19 @@ module.exports = {
 		
 		// CODE FOR SUBCOMMAND: LIST
 		
-		if (interaction.options.getSubcommand() === 'list') {
+		if (interaction.options.getSubcommand() === 'view') {
+
+			// TODO: Find a way to collect a response from the command, without having to require an input (Collectors? Optional Input or Required Input?)
+
 			if (vidList) {
 				let idFieldValues = ''
 				let vidFieldValues = ''
 				vidList
 				.reverse()
 				.forEach(vidEntry => {
-					console.log(vidEntry.id, vidEntry.failUrl, vidEntry.desc)
 					idFieldValues += `${vidEntry.id}\n\n`
 					vidFieldValues += `${vidEntry.desc}\n\n`
 				});
-				console.log(name)
 
 				const failVideoListEmbed = new MessageEmbed()
 				.setTitle(`${name.username}'s Fail Video List`)
@@ -153,18 +146,5 @@ module.exports = {
 				})
 			}
 		}
-
-		// CODE FOR SUBCOMMAND: VIEW
-		if (interaction.options.getSubcommand() === 'view') {
-			const filterId = interaction.options.getNumber('id')
-			if (vidList) {
-				const result = vidList.filter((e) => e.id === filterId)[0]
-				console.log(result)
-				await interaction.reply({
-					content: `Here is ${name}'s fail video: ${result.failUrl}` //FIXME: Move this code to the /list command so that there is an optional integer (i.e. '/fail list 2' or something)
-				})
-			}
-		}
-
 	},
 };
